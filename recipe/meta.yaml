@@ -1,0 +1,48 @@
+{% set name = "pythonanywhere" %}
+{% set version = "0.10.2" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+build:
+  skip: true  # [py2k]
+  script: {{ PYTHON }} -m pip install . -vv
+  number: 0
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/pythonanywhere-{{ version }}.tar.gz
+  sha256: a33664b51b37df00964cac4ac2481226adc595471a3855b6bbb27e33eee98574
+
+requirements:
+  host:
+    - pip
+    - python
+  run:
+    - docopt
+    - packaging
+    - python
+    - python-dateutil
+    - requests
+    - schema
+    - tabulate
+    - typer
+
+test:
+  imports:
+    - cli
+    - pythonanywhere
+  commands:
+    - pip check
+  requires:
+    - pip
+
+about:
+  home: https://github.com/pythonanywhere/helper_scripts/
+  summary: PythonAnywhere helper tools for users
+  license: MIT
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - bkreider

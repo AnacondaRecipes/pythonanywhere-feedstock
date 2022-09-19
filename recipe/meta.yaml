@@ -7,7 +7,8 @@ package:
 
 build:
   number: 0
-  skip: True  # [py<36]
+  # docopt currently is not available on s390x
+  skip: True  # [py<36 or s390x]
   script: {{ PYTHON }} -m pip install . -vv
 
 source:

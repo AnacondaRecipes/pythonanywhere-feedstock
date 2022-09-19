@@ -46,6 +46,7 @@ about:
   license: MIT
   license_family: MIT
   license_file: LICENSE
+  license_url: https://github.com/pythonanywhere/helper_scripts/blob/master/LICENSE
   dev_url: https://github.com/pythonanywhere/helper_scripts/
   doc_url: https://github.com/pythonanywhere/helper_scripts/blob/master/README.md
 

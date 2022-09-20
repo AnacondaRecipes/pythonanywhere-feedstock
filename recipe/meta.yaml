@@ -7,8 +7,7 @@ package:
 
 build:
   number: 0
-  # docopt currently is not available on s390x
-  skip: True  # [py<36 or s390x]
+  skip: True  # [py<36]
   script: {{ PYTHON }} -m pip install . -vv
 
 source:
@@ -40,6 +39,7 @@ test:
     - pip
   commands:
     - pip check
+    - pa --help
 
 about:
   home: https://github.com/pythonanywhere/helper_scripts/

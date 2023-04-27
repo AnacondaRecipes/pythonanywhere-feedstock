@@ -1,5 +1,5 @@
 {% set name = "pythonanywhere" %}
-{% set version = "0.10.2" %}
+{% set version = "0.11.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,12 +7,12 @@ package:
 
 build:
   number: 0
-  skip: True  # [py<36]
-  script: {{ PYTHON }} -m pip install . -vv
+  skip: True  # [py<37]
+  script: {{ PYTHON }} -m pip install . -vv --no-build-isolation --no-deps
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/pythonanywhere-{{ version }}.tar.gz
-  sha256: a33664b51b37df00964cac4ac2481226adc595471a3855b6bbb27e33eee98574
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 27d0111acb70ae751bf117a451d4a4826ae3fe1ac221b0e1c3a0044bf7621172
 
 requirements:
   host:

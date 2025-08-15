@@ -1,9 +1,6 @@
 {% set name = "pythonanywhere" %}
 {% set version = "0.15.5" %}
 
-# click 8.2+ ABI changed, old version Typer runtime fail
-{% set click_version = "<8.2" %}
-
 package:
   name: {{ name|lower }}
   version: {{ version }}
@@ -29,18 +26,18 @@ requirements:
     - pip
     - setuptools
     - wheel
-    - click {{ click_version }}
   run:
     - python
     - docopt
     - packaging
     - python-dateutil
-    - pythonanywhere-core==0.2.4
+    - pythonanywhere-core ==0.2.4
     - requests
     - schema
     - snakesay
     - tabulate
-    - click {{ click_version }}
+    # click 8.2+ ABI changed, old version Typer runtime fail
+    - click >=8.0,<8.2
     - typer
 
 # tests/test_scripts_commons.py:34: AssertionError
@@ -118,7 +115,6 @@ about:
   license: MIT
   license_family: MIT
   license_file: LICENSE
-  license_url: https://github.com/pythonanywhere/helper_scripts/blob/master/LICENSE
   dev_url: https://github.com/pythonanywhere/helper_scripts
   doc_url: https://github.com/pythonanywhere/helper_scripts/blob/master/README.md
   description: |

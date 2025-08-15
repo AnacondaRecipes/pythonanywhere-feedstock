@@ -1,6 +1,9 @@
 {% set name = "pythonanywhere" %}
 {% set version = "0.15.5" %}
 
+# click 8.2+ ABI changed, old version Typer runtime fail
+{% set click_version = "<8.2" %}
+
 package:
   name: {{ name|lower }}
   version: {{ version }}
@@ -8,11 +11,17 @@ package:
 build:
   number: 0
   skip: True  # [py<38]
-  script: {{ PYTHON }} -m pip install . -vv --no-build-isolation --no-deps
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
+  entry_points:
+    - pa = cli.pa:app
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 6abab25d405111a2a0ab94f05d06dc0e2958bc53af082224dd3012f86b1840d9
+  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+    sha256: 6abab25d405111a2a0ab94f05d06dc0e2958bc53af082224dd3012f86b1840d9
+
+  - url: https://github.com/{{ name }}/helper_scripts/archive/refs/tags/v{{ version }}.tar.gz
+    sha256: 627ae7fe2a994905f57db299bd4839e5a11e4a992bc382c02f9bfbab6839daff
+    folder: gh_src
 
 requirements:
   host:
@@ -20,43 +29,75 @@ requirements:
     - pip
     - setuptools
     - wheel
+    - click {{ click_version }}
   run:
     - python
     - docopt
     - packaging
     - python-dateutil
+    - pythonanywhere-core==0.2.4
     - requests
     - schema
+    - snakesay
     - tabulate
+    - click {{ click_version }}
     - typer
 
+# tests/test_scripts_commons.py:34: AssertionError
+# "Key '--toggle' error: (None, <class 'bool'>) did not validate 'not valid value'"
+{% set skip_keywords = [
+    "test_exits_because_boolean_not_satisfied"
+] %}
+
 test:
-  # Only the CLI interface (`pa --help`) is tested in this recipe.
-  # Imports of pythonanywhere.* modules are not tested because some submodules
-  # depend on external Python packages that are not available on Conda:
-  # - pythonanywhere_core==0.2.4
-  # - snakesay
-  #
-  # These dependencies are pip-only and have no corresponding Conda packages.
-  # To avoid test failures due to missing dependencies and partial functionality,
-  # the testing is limited to verifying the CLI works correctly.
-  #
-  # For complete coverage, it is recommended to first add `pythonanywhere_core`
-  # and `snakesay` as proper Conda packages. Once they are available, import
-  # tests for the full `pythonanywhere` module can be enabled.
+  source_files:
+    - gh_src/tests
+    - gh_src/scripts
+  imports:
+    - cli.django
+    - cli.pa
+    - cli.path
+    - cli.schedule
+    - cli.students
+    - cli.webapp
+    - cli.website
+    - pythonanywhere_core.base
+    - pythonanywhere_core.exceptions
+    - pythonanywhere_core.files
+    - pythonanywhere_core.schedule
+    - pythonanywhere_core.students
+    - pythonanywhere_core.webapp
+    - pythonanywhere_core.website
+    - pythonanywhere.django_project
+    - pythonanywhere.exceptions
+    - pythonanywhere.files
+    - pythonanywhere.launch_bash_in_virtualenv
+    - pythonanywhere.project
+    - pythonanywhere.scripts_commons
+    - pythonanywhere.students
+    - pythonanywhere.task
+    - pythonanywhere.utils
+    - pythonanywhere.virtualenvs
   requires:
     - pip
+    - pytest
+    - pytest-mock
+    - pytest-xdist
+    - psutil
+    - responses
   commands:
-    - echo "Testing skipped - no snakesay and pythonanywhere_core"
+    - pip check
+    - pa --help
+    - pytest -n auto -m "not slowtest" -v --color=yes gh_src/tests -k "not ({{ skip_keywords | join(' or ') }})"
 
 about:
-  home: https://github.com/pythonanywhere/helper_scripts/
+  home: https://github.com/pythonanywhere/helper_scripts
   summary: PythonAnywhere helper tools for users
   license: MIT
   license_family: MIT
   license_file: LICENSE
   license_url: https://github.com/pythonanywhere/helper_scripts/blob/master/LICENSE
-  dev_url: https://github.com/pythonanywhere/helper_scripts/
+  dev_url: https://github.com/pythonanywhere/helper_scripts
   doc_url: https://github.com/pythonanywhere/helper_scripts/blob/master/README.md
   description: |
     PythonAnywhere is a collection of helper scripts and command-line tools 

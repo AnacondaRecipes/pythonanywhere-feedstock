@@ -72,6 +72,7 @@ test:
     - gh_src/tests
     - gh_src/scripts
   imports:
+    - cli
     - cli.django
     - cli.pa
     - cli.path
@@ -79,13 +80,7 @@ test:
     - cli.students
     - cli.webapp
     - cli.website
-    - pythonanywhere_core.base
-    - pythonanywhere_core.exceptions
-    - pythonanywhere_core.files
-    - pythonanywhere_core.schedule
-    - pythonanywhere_core.students
-    - pythonanywhere_core.webapp
-    - pythonanywhere_core.website
+    - pythonanywhere
     - pythonanywhere.django_project
     - pythonanywhere.exceptions
     - pythonanywhere.files

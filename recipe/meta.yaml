@@ -59,7 +59,15 @@ requirements:
     "test_deletes_directory_if_branch_does_not_exist",
     "test_program_raises_if_branch_does_not_exist",
     "test_deletes_directory_if_multiple_branches",
-    "test_creates_folder"
+    "test_creates_folder",
+    "test_calls_startproject_for_older_django",
+    "test_calls_startproject_for_newer_django",
+    "test_if_requirements_txt_exists",
+    "test_nuke_option_deletes_directory_first",
+    "test_project_path",
+    "test_exits_because_boolean_not_satisfied",
+    "test_nuke_option_overrides_directory_checks",
+    "test_raises_if_project_path_exists"
 ] %}
 
 test:

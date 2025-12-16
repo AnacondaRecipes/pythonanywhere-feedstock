@@ -1,5 +1,27 @@
 {% set name = "pythonanywhere" %}
-{% set version = "0.15.5" %}
+{% set version = "0.18.0" %}
+{% set SKIP_TEST_POSIX = [
+  "test_exits_because_boolean_not_satisfied"
+] %}
+{% set SKIP_TEST_WIN64 = [
+  "test_creates_pa_path_with_provided_path",
+  "test_exits_with_success_when_successful_upload",
+  "test_exits_with_error_when_unsuccessful_upload",
+  "test_create_calls_all_stuff_in_right_order",
+  "test_raises_if_multiple_branches",
+  "test_deletes_directory_if_branch_does_not_exist",
+  "test_program_raises_if_branch_does_not_exist",
+  "test_deletes_directory_if_multiple_branches",
+  "test_creates_folder",
+  "test_calls_startproject_for_older_django",
+  "test_calls_startproject_for_newer_django",
+  "test_if_requirements_txt_exists",
+  "test_nuke_option_deletes_directory_first",
+  "test_project_path",
+  "test_exits_because_boolean_not_satisfied",
+  "test_nuke_option_overrides_directory_checks",
+  "test_raises_if_project_path_exists"
+] %}
 
 package:
   name: {{ name|lower }}
@@ -7,17 +29,16 @@ package:
 
 build:
   number: 0
-  skip: True  # [py<38]
+  skip: true  # [py<38]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
     - pa = cli.pa:app
 
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-    sha256: 6abab25d405111a2a0ab94f05d06dc0e2958bc53af082224dd3012f86b1840d9
-
+    sha256: c8098c9670f4efb89620a7b7915f78a591248711aa2bc18082aa8fc76fcd19de
   - url: https://github.com/{{ name }}/helper_scripts/archive/refs/tags/v{{ version }}.tar.gz
-    sha256: 627ae7fe2a994905f57db299bd4839e5a11e4a992bc382c02f9bfbab6839daff
+    sha256: 6ca250d3e5d5ecfa1837b0fa73e3cd7959ca4f8e43619c396effec0c7fc30fd7
     folder: gh_src
 
 requirements:
@@ -34,39 +55,16 @@ requirements:
     - pythonanywhere-core ==0.2.4
     - requests
     - schema
-    - snakesay
+    - snakesay ==0.10.4
     - tabulate
     # click 8.2+ ABI changed, old version Typer runtime fail
     - click >=8.0,<8.2
     - typer
+    - pythonanywhere_core ==0.2.9
 
 # tests/test_scripts_commons.py:34: AssertionError
 # "Key '--toggle' error: (None, <class 'bool'>) did not validate 'not valid value'"
-{% set SKIP_TEST_POSIX = [
-    "test_exits_because_boolean_not_satisfied"
-] %}
-
 # Multiple AssertionError mostly regarding win path issue
-{% set SKIP_TEST_WIN64 = [
-    "test_creates_pa_path_with_provided_path",
-    "test_exits_with_success_when_successful_upload",
-    "test_exits_with_error_when_unsuccessful_upload",
-    "test_create_calls_all_stuff_in_right_order",
-    "test_raises_if_multiple_branches",
-    "test_deletes_directory_if_branch_does_not_exist",
-    "test_program_raises_if_branch_does_not_exist",
-    "test_deletes_directory_if_multiple_branches",
-    "test_creates_folder",
-    "test_calls_startproject_for_older_django",
-    "test_calls_startproject_for_newer_django",
-    "test_if_requirements_txt_exists",
-    "test_nuke_option_deletes_directory_first",
-    "test_project_path",
-    "test_exits_because_boolean_not_satisfied",
-    "test_nuke_option_overrides_directory_checks",
-    "test_raises_if_project_path_exists"
-] %}
-
 test:
   source_files:
     - gh_src/tests
@@ -113,10 +111,12 @@ about:
   dev_url: https://github.com/pythonanywhere/helper_scripts
   doc_url: https://github.com/pythonanywhere/helper_scripts/blob/master/README.md
   description: |
-    PythonAnywhere is a collection of helper scripts and command-line tools 
-    for interacting with the PythonAnywhere cloud platform. It allows users to manage files, 
-    databases, web apps, scheduled tasks, and virtual environments directly 
+    PythonAnywhere is a collection of helper scripts and command-line tools
+    for interacting with the PythonAnywhere cloud platform. It allows users to manage files,
+    databases, web apps, scheduled tasks, and virtual environments directly
     from their local terminal.
+
+
 
 extra:
   recipe-maintainers:

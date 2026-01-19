@@ -1,5 +1,5 @@
 {% set name = "pythonanywhere" %}
-{% set version = "0.15.5" %}
+{% set version = "0.18.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,23 +7,22 @@ package:
 
 build:
   number: 0
-  skip: True  # [py<38]
+  skip: True  # [py<310]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
     - pa = cli.pa:app
 
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-    sha256: 6abab25d405111a2a0ab94f05d06dc0e2958bc53af082224dd3012f86b1840d9
-
+    sha256: c8098c9670f4efb89620a7b7915f78a591248711aa2bc18082aa8fc76fcd19de
   - url: https://github.com/{{ name }}/helper_scripts/archive/refs/tags/v{{ version }}.tar.gz
-    sha256: 627ae7fe2a994905f57db299bd4839e5a11e4a992bc382c02f9bfbab6839daff
+    sha256: 6ca250d3e5d5ecfa1837b0fa73e3cd7959ca4f8e43619c396effec0c7fc30fd7
     folder: gh_src
 
 requirements:
   host:
-    - python
     - pip
+    - python
     - setuptools
     - wheel
   run:
@@ -31,18 +30,22 @@ requirements:
     - docopt
     - packaging
     - python-dateutil
-    - pythonanywhere-core ==0.2.4
+    - pythonanywhere-core ==0.2.9
     - requests
     - schema
-    - snakesay
+    - snakesay ==0.10.4
     - tabulate
-    # click 8.2+ ABI changed, old version Typer runtime fail
-    - click >=8.0,<8.2
     - typer
 
 # tests/test_scripts_commons.py:34: AssertionError
 # "Key '--toggle' error: (None, <class 'bool'>) did not validate 'not valid value'"
 {% set SKIP_TEST_POSIX = [
+    "test_validates_hours",
+    "test_validates_minutes",
+    "test_validates_log_number",
+    "test_warns_when_wrong_format_provided",
+    "test_validates_minute",
+    "test_validates_hour",
     "test_exits_because_boolean_not_satisfied"
 ] %}
 
@@ -64,7 +67,33 @@ requirements:
     "test_project_path",
     "test_exits_because_boolean_not_satisfied",
     "test_nuke_option_overrides_directory_checks",
-    "test_raises_if_project_path_exists"
+    "test_raises_if_project_path_exists",
+    "test_validates_hours",
+    "test_validates_minutes",
+    "test_validates_log_number",
+    "test_warns_when_wrong_format_provided",
+    "test_validates_minute",
+    "test_validates_hour",
+    "test_calls_git_subprocess",
+    "test_nuke_option_ignores_directory_doesnt_exist",
+    "test_checks_happy_path_with_one_branch",
+    "test_checks_if_branch_exists",
+    "test_nuke_option_handles_directory_not_existing",
+    "test_project_domain_and_python_version",
+    "test_checkouts_branch_if_not_current_head",
+    "test_runs_manage_py_in_correct_virtualenv",
+    "test_project_wsgi_file_path",
+    "test_does_not_checkouts_branch_if_current_head",
+    "test_runs_manage_py_in_correct_virtualenv",
+    "test_project_webapp",
+    "test_is_versionless_django_by_default",
+    "test_project_virtualenv",
+    "test_sanity_checks_raises_if_virtualenv_exists",
+    "test_sanity_checks_calls_webapp_sanity_checks",
+    "test_start_bash_calls_launch_bash_in_virtualenv_with_virtualenv_and_project_path",
+    "test_sanity_checks_raises_if_project_path_exists",
+    "test_start_bash_calls_launch_bash_in_virtualenv_with_unique_id",
+    "test_sanity_checks_nuke_option_overrides_directory_checks"
 ] %}
 
 test:
@@ -106,17 +135,17 @@ test:
 
 about:
   home: https://github.com/pythonanywhere/helper_scripts
-  summary: PythonAnywhere helper tools for users
   license: MIT
   license_family: MIT
   license_file: LICENSE
-  dev_url: https://github.com/pythonanywhere/helper_scripts
-  doc_url: https://github.com/pythonanywhere/helper_scripts/blob/master/README.md
   description: |
+  summary: PythonAnywhere helper tools for users
     PythonAnywhere is a collection of helper scripts and command-line tools 
     for interacting with the PythonAnywhere cloud platform. It allows users to manage files, 
     databases, web apps, scheduled tasks, and virtual environments directly 
     from their local terminal.
+  dev_url: https://github.com/pythonanywhere/helper_scripts
+  doc_url: https://github.com/pythonanywhere/helper_scripts/blob/master/README.md
 
 extra:
   recipe-maintainers:

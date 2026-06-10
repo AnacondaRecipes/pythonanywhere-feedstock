@@ -31,9 +31,7 @@ requirements:
     - python-dateutil
     - pythonanywhere-core >=0.3.0
     - requests
-    # relax schema upper bound version to 0.7.8
-    # exclude 0.7.3 and 0.7.6 because they are yanked
-    - schema >=0.7.2,<=0.7.8,!=0.7.3,!=0.7.6
+    - schema ==0.7.2
     - snakesay ==0.10.4
     - tabulate
     - typer

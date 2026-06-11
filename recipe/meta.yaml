@@ -1,38 +1,37 @@
 {% set name = "pythonanywhere" %}
-{% set version = "0.18.0" %}
+{% set version = "0.19.0" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 build:
   number: 0
-  skip: True  # [py<310]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
     - pa = cli.pa:app
+  skip: true  # [py<310]
 
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-    sha256: c8098c9670f4efb89620a7b7915f78a591248711aa2bc18082aa8fc76fcd19de
+    sha256: 98e9a97e0702f0364f1e9b449881cd00bf4ede17a37926b92294a36aae098038
   - url: https://github.com/{{ name }}/helper_scripts/archive/refs/tags/v{{ version }}.tar.gz
-    sha256: 6ca250d3e5d5ecfa1837b0fa73e3cd7959ca4f8e43619c396effec0c7fc30fd7
+    sha256: 54cb937c80026132f265910bc0eaf08ebdc97dc2003c3a504104de16e42036ca
     folder: gh_src
 
 requirements:
   host:
     - pip
     - python
-    - setuptools
-    - wheel
+    - setuptools >=77.0.3
   run:
     - python
     - docopt
     - packaging
     - python-dateutil
-    - pythonanywhere-core ==0.2.9
+    - pythonanywhere-core >=0.3.0
     - requests
-    - schema
+    - schema ==0.7.2
     - snakesay ==0.10.4
     - tabulate
     - typer

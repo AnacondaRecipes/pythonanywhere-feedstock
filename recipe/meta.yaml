@@ -5,12 +5,14 @@ package:
   name: {{ name }}
   version: {{ version }}
 
+# py<311: pythonanywhere-core 0.3.3 has no py310 build in Defaults.
+# win-arm64: upstream hard-pins schema ==0.7.2, which has no win-arm64 build in Defaults.
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
     - pa = cli.pa:app
-  skip: true  # [py<311]  # pythonanywhere-core 0.3.3 has no py310 build in defaults
+  skip: true  # [py<311 or (win and arm64)]
 
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
@@ -31,9 +33,7 @@ requirements:
     - python-dateutil
     - pythonanywhere-core >=0.3.3
     - requests
-    - schema ==0.7.2  # [not (win and arm64)]
-    # win-arm64 only has 0.7.8 builds
-    - schema >=0.7.8,<0.8  # [win and arm64]
+    - schema ==0.7.2
     - snakesay ==0.10.4
     - tabulate
     - typer
@@ -77,11 +77,6 @@ requirements:
     "test_sanity_checks_nuke_option_overrides_directory_checks",
 ] %}
 
-# win-arm64 can only use schema 0.7.8, whose validation message text differs
-{% set SKIP_TEST_WIN_ARM64 = [
-    "test_exits_because_boolean_not_satisfied",
-] %}
-
 test:
   source_files:
     - gh_src/tests
@@ -117,8 +112,7 @@ test:
     - pip check
     - pa --help
     - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests  # [not win]
-    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests -k "not ({{ SKIP_TEST_WIN | join(' or ') }})"  # [win and not arm64]
-    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests -k "not ({{ (SKIP_TEST_WIN + SKIP_TEST_WIN_ARM64) | join(' or ') }})"  # [win and arm64]
+    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests -k "not ({{ SKIP_TEST_WIN | join(' or ') }})"  # [win]
 
 about:
   home: https://github.com/pythonanywhere/helper_scripts

@@ -38,45 +38,6 @@ requirements:
     - tabulate
     - typer
 
-# Windows-only failures: path separator assumptions in the upstream tests
-{% set SKIP_TEST_WIN = [
-    "test_creates_pa_path_with_provided_path",
-    "test_exits_with_success_when_successful_upload",
-    "test_exits_with_error_when_unsuccessful_upload",
-    "test_create_calls_all_stuff_in_right_order",
-    "test_raises_if_multiple_branches",
-    "test_deletes_directory_if_branch_does_not_exist",
-    "test_program_raises_if_branch_does_not_exist",
-    "test_deletes_directory_if_multiple_branches",
-    "test_creates_folder",
-    "test_calls_startproject_for_older_django",
-    "test_calls_startproject_for_newer_django",
-    "test_if_requirements_txt_exists",
-    "test_nuke_option_deletes_directory_first",
-    "test_project_path",
-    "test_nuke_option_overrides_directory_checks",
-    "test_raises_if_project_path_exists",
-    "test_calls_git_subprocess",
-    "test_nuke_option_ignores_directory_doesnt_exist",
-    "test_checks_happy_path_with_one_branch",
-    "test_checks_if_branch_exists",
-    "test_nuke_option_handles_directory_not_existing",
-    "test_project_domain_and_python_version",
-    "test_checkouts_branch_if_not_current_head",
-    "test_runs_manage_py_in_correct_virtualenv",
-    "test_project_wsgi_file_path",
-    "test_does_not_checkouts_branch_if_current_head",
-    "test_project_webapp",
-    "test_is_versionless_django_by_default",
-    "test_project_virtualenv",
-    "test_sanity_checks_raises_if_virtualenv_exists",
-    "test_sanity_checks_calls_webapp_sanity_checks",
-    "test_start_bash_calls_launch_bash_in_virtualenv_with_virtualenv_and_project_path",
-    "test_sanity_checks_raises_if_project_path_exists",
-    "test_start_bash_calls_launch_bash_in_virtualenv_with_unique_id",
-    "test_sanity_checks_nuke_option_overrides_directory_checks",
-] %}
-
 test:
   source_files:
     - gh_src/tests
@@ -111,8 +72,7 @@ test:
   commands:
     - pip check
     - pa --help
-    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests  # [not win]
-    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests -k "not ({{ SKIP_TEST_WIN | join(' or ') }})"  # [win]
+    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests
 
 about:
   home: https://github.com/pythonanywhere/helper_scripts

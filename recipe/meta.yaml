@@ -1,5 +1,5 @@
 {% set name = "pythonanywhere" %}
-{% set version = "0.19.0" %}
+{% set version = "0.19.3" %}
 
 package:
   name: {{ name }}
@@ -10,13 +10,13 @@ build:
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
     - pa = cli.pa:app
-  skip: true  # [py<310]
+  skip: true  # [py<311]  # pythonanywhere-core 0.3.3 has no py310 build in defaults
 
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-    sha256: 98e9a97e0702f0364f1e9b449881cd00bf4ede17a37926b92294a36aae098038
+    sha256: b6dd931b2086c0f38682b5e2323ddd649b4b023809a1aa602bbdc2e5f6003ed4
   - url: https://github.com/{{ name }}/helper_scripts/archive/refs/tags/v{{ version }}.tar.gz
-    sha256: 54cb937c80026132f265910bc0eaf08ebdc97dc2003c3a504104de16e42036ca
+    sha256: ffa3a215b6a7e965a075f0e3514b39b3768a39919be4bf57d6d42e5d073f343c
     folder: gh_src
 
 requirements:
@@ -29,26 +29,14 @@ requirements:
     - docopt
     - packaging
     - python-dateutil
-    - pythonanywhere-core >=0.3.0
+    - pythonanywhere-core >=0.3.3
     - requests
     - schema ==0.7.2
     - snakesay ==0.10.4
     - tabulate
     - typer
 
-# tests/test_scripts_commons.py:34: AssertionError
-# "Key '--toggle' error: (None, <class 'bool'>) did not validate 'not valid value'"
-{% set SKIP_TEST_POSIX = [
-    "test_validates_hours",
-    "test_validates_minutes",
-    "test_validates_log_number",
-    "test_warns_when_wrong_format_provided",
-    "test_validates_minute",
-    "test_validates_hour",
-    "test_exits_because_boolean_not_satisfied"
-] %}
-
-# Multiple AssertionError mostly regarding win path issue
+# Windows-only failures: path separator assumptions in the upstream tests
 {% set SKIP_TEST_WIN64 = [
     "test_creates_pa_path_with_provided_path",
     "test_exits_with_success_when_successful_upload",
@@ -64,15 +52,8 @@ requirements:
     "test_if_requirements_txt_exists",
     "test_nuke_option_deletes_directory_first",
     "test_project_path",
-    "test_exits_because_boolean_not_satisfied",
     "test_nuke_option_overrides_directory_checks",
     "test_raises_if_project_path_exists",
-    "test_validates_hours",
-    "test_validates_minutes",
-    "test_validates_log_number",
-    "test_warns_when_wrong_format_provided",
-    "test_validates_minute",
-    "test_validates_hour",
     "test_calls_git_subprocess",
     "test_nuke_option_ignores_directory_doesnt_exist",
     "test_checks_happy_path_with_one_branch",
@@ -83,7 +64,6 @@ requirements:
     "test_runs_manage_py_in_correct_virtualenv",
     "test_project_wsgi_file_path",
     "test_does_not_checkouts_branch_if_current_head",
-    "test_runs_manage_py_in_correct_virtualenv",
     "test_project_webapp",
     "test_is_versionless_django_by_default",
     "test_project_virtualenv",
@@ -92,7 +72,7 @@ requirements:
     "test_start_bash_calls_launch_bash_in_virtualenv_with_virtualenv_and_project_path",
     "test_sanity_checks_raises_if_project_path_exists",
     "test_start_bash_calls_launch_bash_in_virtualenv_with_unique_id",
-    "test_sanity_checks_nuke_option_overrides_directory_checks"
+    "test_sanity_checks_nuke_option_overrides_directory_checks",
 ] %}
 
 test:
@@ -129,19 +109,19 @@ test:
   commands:
     - pip check
     - pa --help
-    - pytest -n auto -m "not slowtest" -v --color=yes gh_src/tests -k "not ({{ SKIP_TEST_POSIX | join(' or ') }})"  # [not win]
-    - pytest -n auto -m "not slowtest" -v --color=yes gh_src/tests -k "not ({{ SKIP_TEST_WIN64 | join(' or ') }})"  # [win]
+    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests  # [not win]
+    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests -k "not ({{ SKIP_TEST_WIN64 | join(' or ') }})"  # [win]
 
 about:
   home: https://github.com/pythonanywhere/helper_scripts
   license: MIT
   license_family: MIT
   license_file: LICENSE
-  description: |
   summary: PythonAnywhere helper tools for users
-    PythonAnywhere is a collection of helper scripts and command-line tools 
-    for interacting with the PythonAnywhere cloud platform. It allows users to manage files, 
-    databases, web apps, scheduled tasks, and virtual environments directly 
+  description: |
+    PythonAnywhere is a collection of helper scripts and command-line tools
+    for interacting with the PythonAnywhere cloud platform. It allows users to manage files,
+    databases, web apps, scheduled tasks, and virtual environments directly
     from their local terminal.
   dev_url: https://github.com/pythonanywhere/helper_scripts
   doc_url: https://github.com/pythonanywhere/helper_scripts/blob/master/README.md

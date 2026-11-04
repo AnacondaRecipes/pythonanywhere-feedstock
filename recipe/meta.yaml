@@ -38,6 +38,31 @@ requirements:
     - tabulate
     - typer
 
+# Windows-only failures:
+# - the upstream `fake_home` fixture needs $HOME and POSIX symlinks, which Windows lacks
+# - the two TestUpload cases assert POSIX path separators
+{% set SKIP_TEST_WIN = [
+    "--deselect=gh_src/tests/test_django_project.py::TestDetectDjangoVersion",
+    "--deselect=gh_src/tests/test_django_project.py::TestDownloadRepo",
+    "--deselect=gh_src/tests/test_django_project.py::TestEnsureBranch",
+    "--deselect=gh_src/tests/test_django_project.py::TestRunCollectStatic",
+    "--deselect=gh_src/tests/test_django_project.py::TestRunMigrate",
+    "--deselect=gh_src/tests/test_django_project.py::TestRunStartproject",
+    "--deselect=gh_src/tests/test_project.py::test_project_domain_and_python_version",
+    "--deselect=gh_src/tests/test_project.py::test_project_path",
+    "--deselect=gh_src/tests/test_project.py::test_project_virtualenv",
+    "--deselect=gh_src/tests/test_project.py::test_project_webapp",
+    "--deselect=gh_src/tests/test_project.py::test_project_wsgi_file_path",
+    "--deselect=gh_src/tests/test_project.py::test_sanity_checks_calls_webapp_sanity_checks",
+    "--deselect=gh_src/tests/test_project.py::test_sanity_checks_nuke_option_overrides_directory_checks",
+    "--deselect=gh_src/tests/test_project.py::test_sanity_checks_raises_if_project_path_exists",
+    "--deselect=gh_src/tests/test_project.py::test_sanity_checks_raises_if_virtualenv_exists",
+    "--deselect=gh_src/tests/test_project.py::test_start_bash_calls_launch_bash_in_virtualenv_with_unique_id",
+    "--deselect=gh_src/tests/test_project.py::test_start_bash_calls_launch_bash_in_virtualenv_with_virtualenv_and_project_path",
+    "--deselect=gh_src/tests/test_cli_path.py::TestUpload::test_exits_with_error_when_unsuccessful_upload",
+    "--deselect=gh_src/tests/test_cli_path.py::TestUpload::test_exits_with_success_when_successful_upload",
+] %}
+
 test:
   source_files:
     - gh_src/tests
@@ -72,7 +97,8 @@ test:
   commands:
     - pip check
     - pa --help
-    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests
+    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests  # [not win]
+    - pytest -n auto -m "not slowtest" -vv --color=yes gh_src/tests {{ SKIP_TEST_WIN | join(' ') }}  # [win]
 
 about:
   home: https://github.com/pythonanywhere/helper_scripts
